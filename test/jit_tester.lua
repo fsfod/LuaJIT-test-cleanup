@@ -102,7 +102,7 @@ local function asserteq(result, expected, info)
   end
 end
 
-local function checktrace(func, tr, mode)
+local function checktrace(func, tr, mode, lnkkind)
 
   local traces = tracker.traces()
 
@@ -111,8 +111,14 @@ local function checktrace(func, tr, mode)
     if #traces == 0 then
       trerror("no traces were started for test")
     else
-      --TODO: Filter out trace that are from checker code
-      tr = traces[1]
+      for i,t in ipairs(traces) do
+        if t.startfunc == func then 
+          tr = t
+          if not lnkkind or t.linktype == lnkkind then 
+            break
+          end
+        end
+      end
     end
   end
 
@@ -122,7 +128,7 @@ local function checktrace(func, tr, mode)
   
   local info = traceinfo(tr.traceno)
   
-  if info.linktype == "stitch" and expectedlnk ~= "stitch" then
+  if info.linktype == "stitch" and lnkkind ~= "stitch" then
     trerror("trace did not cover full function stitched at %s", fmtfunc(tr.stopfunc, tr.stoppc))
   end
   
@@ -134,11 +140,11 @@ local function checktrace(func, tr, mode)
     trerror("trace did not stop in tested function. stoped in %s", fmtfunc(tr.stopfunc, tr.stoppc))
   end
   
-  if info.linktype ~= expectedlnk then
+  if lnkkind and info.linktype ~= lnkkind then
     trerror("expect trace link '%s but got %s", expectedlnk, info.linktype)
   end
   
-  if mode == "root" then
+  if mode == "root" and lnkkind ~= "loop" then
     if tracker.hasexits() then
       trerror("unexpect traces exits ")
     end
@@ -198,6 +204,17 @@ function testsingle(expected, func, ...)
   end
 
   checktrace(func, tr, "root")
+  
+  return true
+end
+
+local function testloop(expected, func, ...)
+  begintest(func)
+
+  local result = func(...)   
+  checktrace(func, tr, "root", "loop")
+  
+  assert(result == expected)
   
   return true
 end
@@ -394,6 +411,7 @@ return {
   testnoexit = testnoexit,
   testexiterr = testexiterr,
   testexits = testexits,
+  testloop = testloop,
   testloopcount = testloopcount,
   setasserteq = setasserteq,
 }

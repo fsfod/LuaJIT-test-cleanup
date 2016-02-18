@@ -7,6 +7,7 @@ local C = ffi.C
 telescope.make_assertion("jit", "", tester.testsingle)
 telescope.make_assertion("jitchecker", "", tester.testwithchecker)
 telescope.make_assertion("noexit", "", tester.testnoexit)
+telescope.make_assertion("jloop", "", tester.testloop)
 
 telescope.make_assertion("cdef", "", function(cdef, name) 
   assert(not name or type(name) == "string")
