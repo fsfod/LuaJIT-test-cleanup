@@ -42,7 +42,11 @@ end
 
 local contexts = {}
 local files = {
+--Interp
+  "misc/argcheck.lua",
   "ffi/ffi_arith_ptr.lua",
+
+  
   "misc/table_insert.lua",
   "misc/alias_alloc.lua",
   "misc/bit_op.lua",
