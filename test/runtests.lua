@@ -44,6 +44,7 @@ local contexts = {}
 local files = {
 --Interp
   "misc/argcheck.lua",
+  "misc/assign_tset_prevnil.lua",
   "ffi/ffi_arith_ptr.lua",
 
   
