@@ -12,6 +12,7 @@ local setfenv = _G.setfenv
 
 
 local _VERSION = "0.6.0"
+local StackTracePlus = require("StackTracePlus")
 
 --- The status codes that can be returned by an invoked test. These should not be overidden.
 -- @name status_codes
@@ -176,7 +177,7 @@ local current_test
 
 local traceback = function()
   local line, nestedline = get_assert_callline(current_test)
-  return line .. "\n" .. debug.traceback()
+  return line .. "\n" .. StackTracePlus.stacktrace(nil, 2)
 end
 
 --- Create a custom assertion.
