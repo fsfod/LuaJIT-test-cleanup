@@ -114,6 +114,71 @@ local assertion_message_prefix  = "Assert failed: expected "
 -- @class table
 local assertions = {}
 
+-- Borrowed from StackTracePlus
+local function getlinesource(info)
+	if type(info.source) == "string" and info.source:sub(1,1) == "@" then
+		local file, err = io.open(info.source:sub(2), "r")
+		if not file then
+			print("file not found: "..tostring(err))	-- whoops!
+			return "?"
+		end
+		local line
+		for _ = 1, info.currentline do
+			line = file:read("*l")
+		end
+		if not line then
+			print("line not found")	-- whoops!
+			return "?"
+		end
+		return line
+	else
+		local line
+		local lineNumber = 0
+		for l in string.gmatch(info.source, "([^\n]+)\n-") do
+			lineNumber = lineNumber + 1
+			if lineNumber == info.currentline then
+				line = l
+				break
+			end
+		end
+		if not line then
+			print("line not found")	-- whoops!
+			return "?"
+		end
+		return line
+	end
+end
+
+function get_assert_callline(func)
+  local level = 1
+	local info = debug.getinfo(level, "nSlf")
+  local lastline, nestedline
+  local source = debug.getinfo(func, "nSlf").source
+  
+	while info do
+		if info.what == "Lua" then
+      if info.func == func then
+        lastline = getlinesource(info)
+        break
+      elseif info.source == source then
+        nestedline = getlinesource(info)
+      end
+		end
+		
+		level = level + 1
+		info = debug.getinfo(level, "nSlf")
+	end
+  
+  return lastline, nestedline
+end
+
+local current_test
+
+local traceback = function()
+  local line, nestedline = get_assert_callline(current_test)
+  return line .. "\n" .. debug.traceback()
+end
+
 --- Create a custom assertion.
 -- This creates an assertion along with a corresponding negative assertion. It
 -- is used internally by telescope to create the default assertions.
@@ -170,7 +235,7 @@ local function make_assertion(name, message, func)
   assertions["assert_" .. name] = function(...)
     if assertion_callback then assertion_callback(...) end
     if not func(...) then
-      error({format_message(message, ...), debug.traceback()})
+      error({format_message(message, ...), traceback()})
     end
   end
 end
@@ -412,6 +477,7 @@ local function run(contexts, callbacks, test_filter)
       assertions_invoked = assertions_invoked + 1
     end
     setfenv(func, env)
+    current_test = func
     local result, message = xpcall(func, debug.traceback)
     if result and assertions_invoked > 0 then
       return status_codes.pass, assertions_invoked, nil
