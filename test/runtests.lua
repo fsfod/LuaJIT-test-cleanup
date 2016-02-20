@@ -45,6 +45,7 @@ local files = {
 --Interp
   "misc/argcheck.lua",
   "misc/assign_tset_prevnil.lua",
+  "misc/compare.lua",
   "ffi/ffi_arith_ptr.lua",
 
   
