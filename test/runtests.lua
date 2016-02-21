@@ -67,6 +67,7 @@ local files = {
   "misc/for_dir.lua",
   "misc/fori_coerce.lua",
   "misc/fuse.lua",
+  "misc/fwd_hrefk_rollback.lua",
   
   "misc/fac.lua",
   "misc/fastfib.lua",
