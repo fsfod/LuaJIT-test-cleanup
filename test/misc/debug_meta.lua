@@ -1,14 +1,11 @@
 
+context("debug.getinfo", function()
 local what
 
 local function mm(a, b)
   local dbg = debug.getinfo(1)
   what = dbg.namewhat == "metamethod" and dbg.name or
 					  dbg.namewhat.." "..(dbg.name or "?")
-end
-
-local function ck(s)
-  assert(what == s, "bad debug info for metamethod "..s)
 end
 
 local mt = {
@@ -29,51 +26,67 @@ local mt = {
   __call = mm,
 }
 
-local t = setmetatable({}, mt)
-local t2 = setmetatable({}, mt)
+it("debug.getinfo in Lua table metamethods", function()
+  local t = setmetatable({}, mt)
+  
+  local x = t.x; assert_eq(what, "__index")
+  t.x = 1; assert_eq(what, "__newindex")
+  
+  local x = t();		assert_eq(what, "local t")
+  local x = t + t;	assert_eq(what, "__add")
+  local x = t - t;	assert_eq(what, "__sub")
+  local x = t * t;	assert_eq(what, "__mul")
+  local x = t / t;	assert_eq(what, "__div")
+  local x = t % t;	assert_eq(what, "__mod")
+  local x = t ^ t;	assert_eq(what, "__pow")
+  local x = -t;		  assert_eq(what, "__unm")
+  local x = t..t;		assert_eq(what, "__concat")
+end)
 
-local x = t.x;		ck("__index")
-t.x = 1;		ck("__newindex")
-local x = t + t;	ck("__add")
-local x = t - t;	ck("__sub")
-local x = t * t;	ck("__mul")
-local x = t / t;	ck("__div")
-local x = t % t;	ck("__mod")
-local x = t ^ t;	ck("__pow")
-local x = -t;		ck("__unm")
---local x = #t;		ck("__len") -- Not called for tables
-local x = t..t;		ck("__concat")
-local x = t();		ck("local t")
+it("debug.getinfo in Lua table comparison metamethods", function()
+  local t = setmetatable({}, mt)
+  local t2 = setmetatable({}, mt)
+  
+--local x = #t;		ck("__len") -- Not called for tables 
+  local x = t == t2;	assert_eq(what, "__eq")
+  local x = t ~= t2;	assert_eq(what, "__eq")
+  local x = t < t2;	assert_eq(what, "__lt")
+  local x = t > t2;	assert_eq(what, "__lt")
+  local x = t <= t2;	assert_eq(what, "__le")
+  local x = t >= t2;	assert_eq(what, "__le")
+end)
 
-local x = t == t2;	ck("__eq")
-local x = t ~= t2;	ck("__eq")
-local x = t < t2;	ck("__lt")
-local x = t > t2;	ck("__lt")
-local x = t <= t2;	ck("__le")
-local x = t >= t2;	ck("__le")
+it("debug.getinfo in userdata metamethods", function()
+  local u = newproxy()
+  debug.setmetatable(u, mt)
 
-local u = newproxy()
-local u2 = newproxy()
-debug.setmetatable(u, mt)
-debug.setmetatable(u2, mt)
+  local x = u.x;		assert_eq(what, "__index")
+  u.x = 1;		assert_eq(what, "__newindex")
+  
+  local x = u();	assert_eq(what, "local u")
+  local x = u + u;	assert_eq(what, "__add")
+  local x = u - u;	assert_eq(what, "__sub")
+  local x = u * u;	assert_eq(what, "__mul")
+  local x = u / u;	assert_eq(what, "__div")
+  local x = u % u;	assert_eq(what, "__mod")
+  local x = u ^ u;	assert_eq(what, "__pow")
+  local x = -u;		assert_eq(what, "__unm")
+  local x = #u;		assert_eq(what, "__len")
+  local x = u..u;	assert_eq(what, "__concat")
+end)
 
-local x = u.x;		ck("__index")
-u.x = 1;		ck("__newindex")
-local x = u + u;	ck("__add")
-local x = u - u;	ck("__sub")
-local x = u * u;	ck("__mul")
-local x = u / u;	ck("__div")
-local x = u % u;	ck("__mod")
-local x = u ^ u;	ck("__pow")
-local x = -u;		ck("__unm")
-local x = #u;		ck("__len")
-local x = u..u;		ck("__concat")
-local x = u();		ck("local u")
+it("debug.getinfo in userdata comparison metamethods", function()
+  local u = newproxy()
+  local u2 = newproxy()
+  debug.setmetatable(u, mt)
+  debug.setmetatable(u2, mt)
 
-local x = u == u2;	ck("__eq")
-local x = u ~= u2;	ck("__eq")
-local x = u < u2;	ck("__lt")
-local x = u > u2;	ck("__lt")
-local x = u <= u2;	ck("__le")
-local x = u >= u2;	ck("__le")
+  local x = u == u2;	assert_eq(what, "__eq")
+  local x = u ~= u2;	assert_eq(what, "__eq")
+  local x = u < u2;	assert_eq(what, "__lt")
+  local x = u > u2;	assert_eq(what, "__lt")
+  local x = u <= u2;	assert_eq(what, "__le")
+  local x = u >= u2;	assert_eq(what, "__le")
+end)
 
+end)
