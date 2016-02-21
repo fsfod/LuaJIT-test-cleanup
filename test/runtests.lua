@@ -66,6 +66,7 @@ local files = {
   "misc/exit_jfuncf.lua",
   "misc/for_dir.lua",
   "misc/fori_coerce.lua",
+  "misc/fuse.lua",
   
   "misc/fac.lua",
   "misc/fastfib.lua",
