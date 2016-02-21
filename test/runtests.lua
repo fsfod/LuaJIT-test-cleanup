@@ -64,6 +64,9 @@ local files = {
   "misc/exit_frame.lua",
   "misc/exit_growstack.lua",
   "misc/exit_jfuncf.lua",
+  
+  "misc/fac.lua",
+  "misc/fastfib.lua",
 }
 
 for _, file in ipairs(files) do 

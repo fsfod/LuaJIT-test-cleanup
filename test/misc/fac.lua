@@ -9,5 +9,7 @@ end
 if arg and arg[1] then
   print(fac(tonumber(arg[1])))
 else
-  assert(fac(10) == 3628800)
+  it("factorial(bench)", function()
+    assert_eq(fac(10), 3628800)
+  end)
 end

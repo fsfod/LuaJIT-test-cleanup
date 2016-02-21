@@ -20,7 +20,9 @@ if arg and arg[1] then
   local n = tonumber(arg and arg[1]) or 10
   io.write(string.format("Fib(%d): %.0f\n", n, fib(n)))
 else
-  assert(fib(40) == 165580141)
-  assert(fib(39) == 102334155)
-  assert(fib(77) == 8944394323791464)
+  it("fast fib(bench)", function()
+    assert_eq(fib(40), 165580141)
+    assert_eq(fib(39), 102334155)
+    assert_eq(fib(77), 8944394323791464)
+  end)
 end
