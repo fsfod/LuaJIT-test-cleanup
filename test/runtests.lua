@@ -47,6 +47,7 @@ local files = {
   "misc/assign_tset_prevnil.lua",
   "misc/compare.lua",
   "misc/constov.lua",
+  "misc/coro_traceback.lua",
   "ffi/ffi_arith_ptr.lua",
 
   
