@@ -62,6 +62,7 @@ local files = {
   "misc/dse_field.lua",
   "misc/dualnum.lua",
   "misc/exit_frame.lua",
+  "misc/exit_growstack.lua",
 }
 
 for _, file in ipairs(files) do 
