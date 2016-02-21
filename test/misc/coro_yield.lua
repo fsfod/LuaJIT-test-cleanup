@@ -3,26 +3,26 @@ local wrap = coroutine.wrap
 local resume = coroutine.resume
 local yield = coroutine.yield
 
+describe("coroutine yield", function()
+
 -- Test stack overflow handling on return from coroutine.
-do
+it("stack overflow handling on return from coroutine", function()
   wrap(function()
     local co = create(function()
       yield(string.byte(string.rep(" ", 100), 1, 100))
     end)
-    assert(select('#', resume(co)) == 101)
+    assert_eq(select('#', resume(co)), 101)
   end)()
-end
 
-do
   wrap(function()
     local f = wrap(function()
       yield(string.byte(string.rep(" ", 100), 1, 100))
     end)
-    assert(select('#', f()) == 100)
+    assert_eq(select('#', f()), 100)
   end)()
-end
+end)
 
-do
+it("Chained coroutine yields", function()
   local function cogen(x)
     return wrap(function(n) repeat x = x+n; n = yield(x) until false end),
 	   wrap(function(n) repeat x = x*n; n = yield(x) until false end)
@@ -30,10 +30,10 @@ do
 
   local a,b=cogen(3)
   local c,d=cogen(5)
-  assert(d(b(c(a(d(b(c(a(1)))))))) == 168428160)
-end
+  assert_eq(d(b(c(a(d(b(c(a(1)))))))), 168428160)
+end)
 
-do
+it("coroutine yield resume", function()
   local function verify(what, expect, ...)
     local got = {...}
     for i=1,100 do
@@ -57,9 +57,9 @@ do
   verify("resume", { true, 2, "test" }, resume(co, 1, "foo"))
   verify("resume pcall", { true, "from pcall" }, resume(co, "bar"))
   verify("resume end", { true, "end" }, resume(co, "again"))
-end
+end)
 
-do
+it("coroutine yield results", function()
   local function verify(expect, func, ...)
     local co = create(func)
     for i=1,100 do
@@ -107,5 +107,7 @@ do
       return o+o
     end,
     42)
-end
+end)
+
+end)
 

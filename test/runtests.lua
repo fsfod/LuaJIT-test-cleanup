@@ -48,6 +48,7 @@ local files = {
   "misc/compare.lua",
   "misc/constov.lua",
   "misc/coro_traceback.lua",
+  "misc/coro_yield.lua",
   "ffi/ffi_arith_ptr.lua",
 
   
