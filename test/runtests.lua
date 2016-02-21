@@ -58,6 +58,7 @@ local files = {
   "misc/alias_alloc.lua",
   "misc/bit_op.lua",
   "misc/cat_jit.lua",
+  "misc/dse_array.lua",
 }
 
 for _, file in ipairs(files) do 
