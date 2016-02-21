@@ -1,19 +1,22 @@
 
-if not os.getenv("SLOWTEST") then return end
+describe("Function constants overflow(SLOWTEST)", function()
 
-do
+--if not os.getenv("SLOWTEST") then return end
+
+it("Function number constants overflow", function()
   local t = { "local x\n" }
   for i=2,65537 do t[i] = "x="..i..".5\n" end
-  assert(loadstring(table.concat(t)) ~= nil)
+  assert_not_nil(loadstring(table.concat(t)))
   t[65538] = "x=65538.5"
-  assert(loadstring(table.concat(t)) == nil)
-end
+  assert_nil(loadstring(table.concat(t)))
+end)
 
-do
+it("Function GC constants overflow", function()
   local t = { "local x\n" }
   for i=2,65537 do t[i] = "x='"..i.."'\n" end
-  assert(loadstring(table.concat(t)) ~= nil)
+  assert_not_nil(loadstring(table.concat(t)))
   t[65538] = "x='65538'"
-  assert(loadstring(table.concat(t)) == nil)
-end
+  assert_nil(loadstring(table.concat(t)))
+end)
 
+end)
