@@ -1,4 +1,4 @@
-do
+it("exit frame 1", function()
   g = 0
   gf = 1
   gz = 2
@@ -21,12 +21,12 @@ do
     for i=1,100 do z(i) end
   end
 
-  assert(g == 495)
-  assert(gf == 6)
-  assert(gz == 7)
-end
+  assert_eq(g, 495)
+  assert_eq(gf, 6)
+  assert_eq(gz, 7)
+end)
 
-do
+it("exit frame recursive 1", function()
   local f, g
   function f(j)
     if j >= 0 then return g(j-1) end
@@ -37,9 +37,9 @@ do
     end
   end
   for k=1,20 do g(20) end
-end
+end)
 
-do
+it("exit frame recursive 2", function()
   local f, g
   function f(j, k)
     if j >= 0 then return g(j-1, k) end
@@ -50,10 +50,10 @@ do
       if i > 100 then return f(j, k) end
     end
   end
-  g(20, 20)
-end
+  assert_nil(g(20, 20))
+end)
 
-do
+it("exit frame recursive 3", function()
   local k = 0
   local f, g
 
@@ -75,6 +75,6 @@ do
     end
   end
 
-  f(1,2,3,4,5)
-end
+  assert_nil(f(1,2,3,4,5))
+end)
 
