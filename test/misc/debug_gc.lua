@@ -1,12 +1,13 @@
-
 -- Do not run this test unless the JIT compiler is turned off.
-if jit and jit.status and jit.status() then return end
+--if jit and jit.status and jit.status() then return end
+
+context("debug.getinfo in GC", function()
 
 local caught, caught_line, caught_mm
 
 local function gcmeta()
   if caught ~= "end" then
---    print(debug.traceback())
+    --print(debug.traceback())
     -- This may point to the wrong instruction if in a JIT trace.
     -- But there's no guarantee if, when or where any GC steps occur.
     local dbg = debug.getinfo(2)
@@ -36,12 +37,29 @@ local function testgc(mm, f)
   if caught_mm ~= mm then
     error("bad name for metamethod in debug info", 2)
   end
-end
+end  
 
-local x
-testgc("__gc", function(i) x = {} end)
-testgc("__gc", function(i) x = {1} end)
-testgc("__gc", function(i) x = function() end end)
-testgc("__concat", function(i) x = i.."" end)
+local success, jit = pcall(require, "jit")
+jit = (success and jit) or nil
 
-caught = "end"
+it("debug.getinfo in __gc meta(jitoff)", function()
+  if jit and jit.status then
+    jit.off()
+  end
+
+  local x
+  testgc("__gc", function(i) x = {} end)
+  testgc("__gc", function(i) x = {1} end)
+  testgc("__gc", function(i) x = function() end end)
+  testgc("__concat", function(i) x = i.."" end)
+
+  caught = "end"
+end)
+
+after(function() 
+  if jit and jit.status then
+    jit.on()
+  end
+end)
+
+end)

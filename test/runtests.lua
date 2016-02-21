@@ -49,6 +49,7 @@ local files = {
   "misc/constov.lua",
   "misc/coro_traceback.lua",
   "misc/coro_yield.lua",
+ -- "misc/debug_gc.lua", currently fails
   "ffi/ffi_arith_ptr.lua",
 
   
