@@ -64,6 +64,8 @@ local files = {
   "misc/exit_frame.lua",
   "misc/exit_growstack.lua",
   "misc/exit_jfuncf.lua",
+  "misc/for_dir.lua",
+  "misc/fori_coerce.lua",
   
   "misc/fac.lua",
   "misc/fastfib.lua",
