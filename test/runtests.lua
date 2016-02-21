@@ -63,6 +63,7 @@ local files = {
   "misc/dualnum.lua",
   "misc/exit_frame.lua",
   "misc/exit_growstack.lua",
+  "misc/exit_jfuncf.lua",
 }
 
 for _, file in ipairs(files) do 

@@ -8,23 +8,26 @@ local function rec(a, b, c, d, e, f)
   return rec(a, b-1, c, d, e, f)+1
 end
 
--- Compile recursive function.
-assert(rec(42, 200, 1, 2, 3, 43) == 207)
+it("trace link to recursive function JFUNCF", function()
+  -- Compile recursive function.
+  assert_eq(rec(42, 200, 1, 2, 3, 43), 207)
 
-local function trec()
-  return rec(42, 0, 1, 2, 3, 43)
-end
+  local function trec()
+    return rec(42, 0, 1, 2, 3, 43)
+  end
 
--- Compile function jumping to JFUNCF.
-for i=1,200 do
-  gcinfo()
-  assert(trec() == 7)
-end
+  -- Compile function jumping to JFUNCF.
+  for i=1,200 do
+    gcinfo()
+    assert(trec() == 7)
+  end
 
--- Shrink stack.
-for j=1,10 do collectgarbage() end
+  -- Shrink stack.
+  for j=1,10 do collectgarbage() end
 
--- Cause an exit due to stack growth with PC pointing to JFUNCF.
--- Needs to load RD with nres+1 and not with the bytecode RD.
-assert(trec() == 7)
+  -- Cause an exit due to stack growth with PC pointing to JFUNCF.
+  -- Needs to load RD with nres+1 and not with the bytecode RD.
+  assert_eq(trec(), 7)
+end)
+
 
