@@ -1,33 +1,49 @@
+context("gcstep", function()
 
-local function testgc(what, func)
+local function testgc(func)
   collectgarbage()
   local oc = gcinfo()
   func()
   local nc = gcinfo()
-  assert(nc < oc*4, "GC step missing for "..what)
+  return oc, nc
 end
 
-testgc("TNEW", function()
-  for i=1,10000 do
-    local t = {}
-  end
+--FIXME: should t not be declared outside the loop since it has no use making it dead code
+it("gcstep TNEW", function()
+  local oc, nc = testgc(function()
+    for i=1,10000 do
+      local t = {}
+    end
+  end)
+  assert_lt(nc, oc*4, "GC step missing")
 end)
 
-testgc("TDUP", function()
-  for i=1,10000 do
-    local t = {1}
-  end
+it("gcstep TDUP", function()
+  local oc, nc = testgc(function()
+    for i=1,10000 do
+      local t = {1}
+    end
+  end)
+  assert_lt(nc, oc*4, "GC step missing")
 end)
 
-testgc("FNEW", function()
-  for i=1,10000 do
-    local function f() end
-  end
+it("gcstep FNEW", function()
+  local oc, nc = testgc(function()
+    for i=1,10000 do
+      local function f() end
+    end
+  end)
+  assert_lt(nc, oc*4, "GC step missing")
 end)
 
-testgc("CAT", function()
-  for i=1,10000 do
-    local s = "x"..i
-  end
+it("gcstep CAT", function()
+  local oc, nc = testgc(function()
+    for i=1,10000 do
+      local s = "x"..i
+    end
+  end)
+  assert_lt(nc, oc*4, "GC step missing")
+end)
+
 end)
 

@@ -52,6 +52,8 @@ local files = {
   "misc/debug_meta.lua",
  -- "misc/debug_gc.lua", currently fails
   "ffi/ffi_arith_ptr.lua",
+  "misc/gc_rechain.lua",
+  "misc/getfenv.lua",
 
   
   "misc/table_insert.lua",
@@ -69,9 +71,12 @@ local files = {
   "misc/fuse.lua",
   "misc/fwd_hrefk_rollback.lua",
   "misc/fwd_tnew_tdup.lua",
-  
+  "misc/fwd_upval.lua",
   "misc/fac.lua",
   "misc/fastfib.lua",
+  "misc/gcstep.lua",
+  "misc/iter.lua",
+  "misc/loop_unroll.lua",
 }
 
 for _, file in ipairs(files) do 

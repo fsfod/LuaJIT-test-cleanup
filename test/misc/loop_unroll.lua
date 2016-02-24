@@ -1,20 +1,20 @@
 
 -- type instability on loop unroll -> record unroll
-do
+it("loop unroll type unstable boolean", function()
   local flip = true
   for i=1,100 do flip = not flip end
   assert(flip == true)
-end
+end)
 
-do
+it("loop unroll type unstable object type", function()
   local t = {}
   local a, b, c = 1, "", t
   for i=1,100 do a,b,c=b,c,a end
   assert(c == 1 and a == "" and b == t)
-end
+end)
 
 -- FAILFOLD on loop unroll -> LJ_TRERR_GFAIL -> record unroll
-do
+it("FAILFOLD on loop unroll", function()
   local t = { 1, 2 }
   local k = 2
   local x = 0
@@ -23,13 +23,15 @@ do
     k = k == 1 and 2 or 1
   end
   assert(x == 300 and k == 2)
-end
+end)
 
--- Unroll if inner loop aborts.
-local j = 0
-for i = 1,100 do
-  repeat
-    j = j+1
-  until true
-end
+it("loop unroll if inner loop aborts", function()
+  -- Unroll if inner loop aborts.
+  local j = 0
+  for i = 1,100 do
+    repeat
+      j = j+1
+    until true
+  end
+end)
 

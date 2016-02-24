@@ -1,5 +1,5 @@
 
-do
+it("gc rechain ", function()
   local k
 
   collectgarbage()
@@ -27,6 +27,6 @@ do
 
   t.ak = 5
 
-  assert(t[k] == 4)
-end
+  assert_eq(t[k], 4)
+end)
 

@@ -1,5 +1,5 @@
 
-do
+it("getfenv global environment and coroutines", function()
   local x
   local function f()
     x = getfenv(0)
@@ -8,8 +8,8 @@ do
   local t = {}
   debug.setfenv(co, t)
   for i=1,50 do f() f() f() end
-  assert(x == getfenv(0))
+  assert_eq(x, getfenv(0))
   coroutine.resume(co)
-  assert(x == t)
-end
+  assert_eq(x, t)
+end)
 
