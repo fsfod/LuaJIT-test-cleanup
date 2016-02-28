@@ -1,4 +1,6 @@
 
+context("debug.sethook", function()
+
 local t = {}
 for i=1,26 do t[i] = string.char(96+i) end
 
@@ -28,28 +30,42 @@ local function foo4() -- UCLO UCLO RET
   end
 end
 
-called = false
-debug.sethook(function() local x = "wrong"; called = true end, "", 1)
-tcheck(t, {foo1(unpack(t))}) -- CALLM TSETM
-assert(called)
-called = false
-tcheck(t, {foo2(unpack(t))})
-assert(called)
-called = false
-tcheck(t, {foo2(unpack(t))})
-assert(called)
-called = false
-foo4()
-assert(called)
-
-debug.sethook(function()
-  local name, val = debug.getlocal(2, 1)
-  assert(name == "a" and val == nil)
-  debug.setlocal(2, 1, "bar")
+after(function() 
   debug.sethook(nil)
-end, "c")
-local function foo5(a)
-  assert(a == "bar")
-end
-foo5()
+end)
 
+it("debug.sethook callback from vararg stack", function()
+  called = false
+  debug.sethook(function() local x = "wrong"; called = true end, "", 1)
+  
+  tcheck(t, {foo1(unpack(t))}) -- CALLM TSETM
+  assert(called)
+  
+  called = false
+  tcheck(t, {foo2(unpack(t))})
+  assert(called)
+  
+  called = false
+  tcheck(t, {foo2(unpack(t))})
+  assert(called)
+  
+  called = false
+  foo4()
+  assert(called)
+end)
+
+it("debug.sethook mutate local of triggering line", function()
+  debug.sethook(function()
+    local name, val = debug.getlocal(2, 1)
+    assert_eq(name, "a")
+    assert_nil(val)
+    debug.setlocal(2, 1, "bar")
+    debug.sethook(nil)
+  end, "c")
+  local function foo5(a)
+    assert(a == "bar")
+  end
+  foo5()
+end)
+
+end)

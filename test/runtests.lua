@@ -54,6 +54,8 @@ local files = {
   "ffi/ffi_arith_ptr.lua",
   "misc/gc_rechain.lua",
   "misc/getfenv.lua",
+  "misc/hook_top.lua",
+  "misc/goto.lua",
 
   
   "misc/table_insert.lua",
@@ -77,6 +79,8 @@ local files = {
   "misc/gcstep.lua",
   "misc/iter.lua",
   "misc/loop_unroll.lua",
+  "misc/hook_record.lua",
+  "misc/jit_flush.lua",
 }
 
 for _, file in ipairs(files) do 

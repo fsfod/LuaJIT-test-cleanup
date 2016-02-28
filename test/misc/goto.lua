@@ -1,6 +1,6 @@
 
 -- Basic goto and label semantics.
-do
+it("Basic goto and label semantics", function()
   local function expect(src, msg)
     local ok, err = loadstring(src)
     if msg then
@@ -34,10 +34,10 @@ do
   end
 
   ::a:: do goto a; ::a:: end -- Forward jump, not an infinite loop.
-end
+end)
 
 -- Trailing label is considered to be out of scope.
-do
+it("goto - Trailing label is considered to be out of scope", function()
   local x = 11
   do
     goto a
@@ -47,7 +47,7 @@ do
     ::a::
     ::b::
   end
-  assert(x == 11)
+  assert_eq(x, 11)
   if os.getenv("LUA52") then
     assert(loadstring([[
       local x = 11
@@ -62,10 +62,9 @@ do
       return x
     ]])() == 11)
   end
-end
+end)
 
--- Simple loop with cross-jumping.
-do
+it("goto - Simple loop with cross-jumping", function()
   local x = 1
   while true do
     goto b
@@ -75,11 +74,10 @@ do
     ::c::
   end
   ::d::
-  assert(x == 100)
-end
+  assert_eq(x, 100)
+end)
 
--- Backwards goto must close upval.
-do
+it("goto - Backwards goto must close upval", function()
   local t = {}
   local i = 1
   ::a::
@@ -88,12 +86,12 @@ do
   x = i
   i = i + 1
   if i <= 2 then goto a end
-  assert(t[1]() == 1)
-  assert(t[2]() == 2)
-end
+  assert_eq(t[1](), 1)
+  assert_eq(t[2](), 2)
+end)
 
 -- Break must close upval, even if closure is parsed after break.
-do
+it("goto - Break must close upval", function()
   local foo
   repeat
     local x
@@ -104,10 +102,9 @@ do
     goto a
   until false
   assert(foo() == true)
-end
+end)
 
--- Label prevents joining to KNIL.
-do
+it("goto - Label prevents joining to KNIL", function()
   local k = 0
   local x
   ::foo::
@@ -116,10 +113,9 @@ do
   y = true
   k = k + 1
   if k < 2 then goto foo end
-end
+end)
 
--- Break resolved from the right scope.
-do
+it("goto - Break resolved from the right scope", function()
   local function p(lvl)
      lvl = lvl or 1
      while true do
@@ -132,10 +128,9 @@ do
 	end
      end
   end
-end
+end)
 
--- Do not join twice with UCLO.
-do
+it("goto - Do not join twice with UCLO", function()
   while true do
     do
       local x
@@ -152,5 +147,5 @@ do
     goto foo
   end
   ::foo::
-end
+end)
 
