@@ -106,7 +106,7 @@ do --- package
   check(package, "config:cpath:loaded:loadlib:path:preload", "searchpath:loaders:searchers:seeall")
 end
 
-do --- pre-5.2 package +lua<5.2
+do --- pre-5.2 package +lua<5.2 -compat5.2
   assert(package.loaders)
   assert(not package.searchers)
   assert(package.seeall)
