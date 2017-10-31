@@ -67,7 +67,7 @@ do --- string
 end
 
 do --- pre-5.2 table +lua<5.2
-  check(table, "concat:foreach:foreachi:getn:insert:maxn:remove:sort", "pack:unpack:setn:new")
+  check(table, "concat:foreach:foreachi:getn:insert:maxn:move:remove:sort", "pack:unpack:setn:new")
 end
 
 do --- 5.2 table +lua>=5.2
